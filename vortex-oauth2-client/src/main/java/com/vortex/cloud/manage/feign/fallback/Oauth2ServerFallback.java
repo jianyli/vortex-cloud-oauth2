@@ -14,6 +14,11 @@ public class Oauth2ServerFallback implements FallbackFactory<IOauth2ServerFeignC
     public IOauth2ServerFeignClient create(Throwable throwable) {
         return new IOauth2ServerFeignClient() {
             @Override
+            public String test() {
+                return null;
+            }
+
+            @Override
             public Map<String, String> getAccessToken(String clientInfo, Map<String, String> params) {
                 return Maps.newHashMap();
             }

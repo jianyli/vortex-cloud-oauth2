@@ -6,6 +6,7 @@
     <modules>
         <module>vortex-oauth2-server</module>
         <module>vortex-oauth2-client</module>
+        <module>test-eureka</module>
     </modules>
 
     <parent>

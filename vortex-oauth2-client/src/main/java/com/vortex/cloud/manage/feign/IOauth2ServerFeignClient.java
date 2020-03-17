@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@FeignClient(name = "vortex-oauth2-client", fallbackFactory = Oauth2ServerFallback.class)
+@FeignClient(name = "vortex-oauth2-server", fallbackFactory = Oauth2ServerFallback.class)
 public interface IOauth2ServerFeignClient {
+    @GetMapping("hi")
+    public String test();
     //获取token
     @PostMapping("oauth/token")
-    Map<String, String> getAccessToken(@RequestHeader("Authorization") String clientInfo, @RequestParam Map<String, String> params);
+    Map<String, String> getAccessToken(@RequestHeader("Authorization") String clientInfo, @RequestParam("params") Map<String, String> params);
 
     //通过token获取用户信息
     @RequestMapping("oauth/user")
@@ -27,7 +29,7 @@ public interface IOauth2ServerFeignClient {
 
     //通过用户名注销所有可用的token；例如，用户修改密码注销pc端和app端的token
     @RequestMapping(name = "oauth/removeAllTokenByUsername", method = RequestMethod.POST)
-    RestResultDto removeAllTokenByUsername(@RequestHeader("Authorization") String accessToken, @RequestParam String username);
+    RestResultDto removeAllTokenByUsername(@RequestHeader("Authorization") String accessToken, @RequestParam("username") String username);
 
 
 }

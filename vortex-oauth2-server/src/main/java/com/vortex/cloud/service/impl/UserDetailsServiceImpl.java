@@ -25,6 +25,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         UserInfo userInfo = userService.findUserByUsername(username);
+        System.out.println("得到用户信息");
         if (userInfo != null) {
             String role = "ADMIN";
             List<SimpleGrantedAuthority> authorities = new ArrayList<>();

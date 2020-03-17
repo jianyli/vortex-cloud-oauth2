@@ -1,12 +1,15 @@
 package com.vortex.cloud.controller;
 
+import com.google.common.collect.Maps;
+import com.vortex.cloud.manage.feign.IOauth2ServerFeignClient;
 import com.vortex.cloud.service.IAuthService;
 import com.vortex.cloud.support.enums.LoginTypeEnum;
+import com.vortex.cloud.vfs.common.exception.ServiceException;
 import com.vortex.cloud.vfs.data.dto.RestResultDto;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
@@ -15,42 +18,67 @@ import java.util.Map;
 public class AuthController {
     @Autowired
     private IAuthService authService;
+    @Autowired
+    private IOauth2ServerFeignClient feignClient;
 
-    //用户名密码登录
-    @RequestMapping(name = "login", method = RequestMethod.POST)
-    public RestResultDto login(@RequestBody Map<String, String> params) {
-        params.put("grant_type", "password");
-        params.put("loginType", LoginTypeEnum.VORTEX_USER.getKey());
-        return authService.getAccessToken(params);
+    //test
+    @RequestMapping("test")
+    public String test() {
+        return feignClient.test();
     }
 
-    //刷新token
-    @RequestMapping(name = "refreshToken", method = {RequestMethod.GET, RequestMethod.POST})
-    public RestResultDto refreshToken(@RequestParam Map<String, String> parameters, HttpServletResponse response) {
-        parameters.put("grant_type", "refresh_token");
-        parameters.put("loginType", LoginTypeEnum.VORTEX_USER.getKey());
-        return authService.getAccessToken(parameters, response);
+    //伏泰用户用户名密码登录
+    @RequestMapping(value = "login", method = RequestMethod.POST)
+    public RestResultDto login(@RequestParam(value = "username") String username,
+                               @RequestParam(value = "password") String password) {
+        if (StringUtils.isAnyBlank(username, password)) {
+            throw new ServiceException("参数不能为空");
+        }
+        Map<String, String> params = Maps.newHashMap();
+        params.put("grant_type", "password");
+        params.put("loginType", LoginTypeEnum.VORTEX_USER.getKey());
+        params.put("username", username);
+        params.put("password", password);
+
+        return RestResultDto.newSuccess(authService.getAccessToken(params));
+    }
+
+    //伏泰用户刷新token
+    @RequestMapping(value = "refreshToken", method = {RequestMethod.GET, RequestMethod.POST})
+    public RestResultDto refreshToken(@RequestParam(value = "refreshToken") String refreshToken) {
+        if (StringUtils.isBlank(refreshToken)) {
+            throw new ServiceException("参数不能为空");
+        }
+        Map<String, String> params = Maps.newHashMap();
+        params.put("grant_type", "refresh_token");
+        params.put("loginType", LoginTypeEnum.VORTEX_USER.getKey());
+        params.put("refresh_token", refreshToken);
+        return RestResultDto.newSuccess(authService.getAccessToken(params));
     }
 
     //appId，appSecret获取token
     @RequestMapping(value = "/getTokenFromThirdPartyApp", method = {RequestMethod.GET, RequestMethod.POST})
-    public RestResultDto<?> getTokenFromThirdPartyApp(@RequestBody Map<String, String> parameters, HttpServletResponse response) {
-        String appKey = parameters.get("appKey");
-        String appSecret = parameters.get("appSecret");
-        parameters.remove("appKey");
-        parameters.remove("appSecret");
-        parameters.put("username", appKey);
-        parameters.put("password", appSecret);
-        parameters.put("grant_type", "password");
-        parameters.put("loginType", LoginTypeEnum.THIRD_PARTY_APP.getKey());
-        return authService.getAccessToken(parameters);
+    public RestResultDto<?> getTokenFromThirdPartyApp(@RequestParam("appKey") String appKey, @RequestParam("appSecret") String appSecret) {
+        System.out.println("第三方应用授权开始：");
+        if (StringUtils.isAnyBlank(appKey, appSecret)) {
+            throw new ServiceException("参数不能为空");
+        }
+        Map<String, String> params = Maps.newHashMap();
+        params.put("username", appKey);
+        params.put("password", appSecret);
+        params.put("grant_type", "password");
+        params.put("loginType", LoginTypeEnum.THIRD_PARTY_APP.getKey());
+        return authService.getAccessToken(params);
     }
 
     //登出
     @RequestMapping(value = "/logout", method = {RequestMethod.GET, RequestMethod.POST})
-    public RestResultDto<?> logout(HttpServletRequest request, HttpServletResponse response) {
-        //TODO 登出待完成
-        return null;
+    public RestResultDto<?> logout(String accessToken, HttpServletResponse response) {
+        if (StringUtils.isBlank(accessToken)) {
+            throw new ServiceException("参数不能为空");
+        }
+        authService.logout(accessToken, response);
+        return RestResultDto.newSuccess();
     }
 
 }

@@ -5,10 +5,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ClientConfig {
-    @Value("${security.clientId}")
+    @Value("${security.oauth2.client.client-id}")
     private String clientId;
 
-    @Value("${security.clientSecret}")
+    @Value("${security.oauth2.client.client-secret}")
     private String clientSecret;
 
     public String getClientId() {

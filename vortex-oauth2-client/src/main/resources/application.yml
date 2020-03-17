@@ -1,3 +1,14 @@
+spring:
+  application:
+    name: vortex-oauth2-client
+server:
+  port: 8080
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
 feign:
   client:
     config:
@@ -5,3 +16,9 @@ feign:
         connectTimeout: 5000
         readTimeout: 5000
         loggerLevel: basic
+
+security:
+  oauth2:
+    client:
+      client-id: clietn1
+      client-secret: secret
