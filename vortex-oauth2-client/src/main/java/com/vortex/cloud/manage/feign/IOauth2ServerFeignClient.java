@@ -9,8 +9,8 @@ import java.util.Map;
 
 @FeignClient(name = "vortex-oauth2-server", fallbackFactory = Oauth2ServerFallback.class)
 public interface IOauth2ServerFeignClient {
-    @GetMapping("hi")
-    public String test();
+    @GetMapping("user/findByUsername")
+    public String test(@RequestParam("username") String username);
     //获取token
     @PostMapping("oauth/token")
     Map<String, String> getAccessToken(@RequestHeader("Authorization") String clientInfo, @RequestParam("params") Map<String, String> params);

@@ -20,7 +20,7 @@ import java.io.IOException;
 /**
  * Spring Security logout handler
  */
-@Component
+
 public class CustomLogoutSuccessHandler
         extends AbstractAuthenticationTargetUrlRequestHandler
         implements LogoutSuccessHandler {

@@ -74,6 +74,9 @@ public class AuthServiceImpl implements IAuthService {
     public Map<String, String> getOauth2Token(Map<String, String> params) {
         String clientId = clientConfig.getClientId();
         String clientSecret = clientConfig.getClientSecret();
+        if (StringUtils.isBlank(params.get("additional_information"))) {
+
+        }
         if (StringUtils.isAnyBlank(clientId, clientSecret)) {
             throw new ServiceException("请配置client信息");
         }

@@ -5,6 +5,7 @@ import com.vortex.cloud.manage.feign.IOauth2ServerFeignClient;
 import com.vortex.cloud.vfs.data.dto.RestResultDto;
 import feign.hystrix.FallbackFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
@@ -14,7 +15,7 @@ public class Oauth2ServerFallback implements FallbackFactory<IOauth2ServerFeignC
     public IOauth2ServerFeignClient create(Throwable throwable) {
         return new IOauth2ServerFeignClient() {
             @Override
-            public String test() {
+            public String test(@RequestParam("username") String username) {
                 return null;
             }
 

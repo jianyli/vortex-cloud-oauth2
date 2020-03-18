@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Created by luhao on 2017/6/2.
  */
-@Component
+
 public class CustomLogoutHandler implements LogoutHandler {
 
     @Override

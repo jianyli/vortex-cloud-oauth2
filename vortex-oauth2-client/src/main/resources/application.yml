@@ -20,5 +20,5 @@ feign:
 security:
   oauth2:
     client:
-      client-id: clietn1
+      client-id: client1
       client-secret: secret
